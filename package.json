@@ -1,0 +1,24 @@
+{
+  "name": "notes_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "cron_job": "node ./src/cronjob.js",
+    "dev": "npm run start & npm run cron_job"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.19.0",
+    "circular-json": "^0.5.9",
+    "cloudinary": "^1.23.0",
+    "graphql": "^15.4.0",
+    "jspdf": "^2.1.1",
+    "moment": "^2.29.1",
+    "mongoose": "^5.10.9",
+    "node-cron": "^2.0.3"
+  }
+}
