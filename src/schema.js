@@ -91,6 +91,34 @@ const resolvers = {
             allNotes = await Note.find();
             var notes = allNotes.filter(b => b.date == date);
             return notes;
+        },
+        saveNotesTrigger: () => {
+
+            mongodb.connect(
+                url,
+                { useNewUrlParser: true, useUnifiedTopology: true },
+                (err, client) => {
+                    if (err) throw err;
+
+                    client
+                        .db("newnotes")
+                        .collection("notes")
+                        .find({})
+                        .toArray((err, data) => {
+                            if (err) throw err;
+
+                            const json2csvParser = new Json2csvParser({ header: true });
+                            const csvData = json2csvParser.parse(data);
+
+                            fs.writeFile("Notes_Export.csv", csvData, function (error) {
+                                if (error) throw error;
+                                console.log("Write to Notes_Export.csv successfully!");
+                            });
+
+                            client.close();
+                        });
+                }
+            );
         }
     },
 
@@ -119,38 +147,6 @@ const resolvers = {
         }
     }
 }
-// Note CSV Export
-const Json2csvParser = require("json2csv").Parser;
-const fs = require("fs");
-const mongodb = require("mongodb").MongoClient;
-
-let url = "mongodb+srv://admin:P@ssw0rd@cluster0.zo5ak.mongodb.net/newnotes?retryWrites=true&w=majority"
-
-mongodb.connect(
-    url,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    (err, client) => {
-      if (err) throw err;
-  
-        client
-            .db("newnotes")
-            .collection("notes")
-            .find({})
-            .toArray((err, data) => {
-            if (err) throw err;
-
-            const json2csvParser = new Json2csvParser({ header: true });
-            const csvData = json2csvParser.parse(data);
-    
-            fs.writeFile("Notes_Export.csv", csvData, function(error) {
-                if (error) throw error;
-                console.log("Write to Notes_Export.csv successfully!");
-            });
-    
-            client.close();
-        });
-    }
-);
 
 
 module.exports = {
