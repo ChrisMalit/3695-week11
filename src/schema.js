@@ -2,6 +2,11 @@ const { gql } = require('apollo-server')
 const { Note, Upcoming } = require('./database')
 var cloudinary = require('cloudinary').v2;
 
+// Note CSV Export
+const Json2csvParser = require("json2csv").Parser;
+const fs = require("fs");
+const mongodb = require("mongodb").MongoClient;
+let url = "mongodb+srv://admin:P@ssw0rd@cluster0.zo5ak.mongodb.net/newnotes?retryWrites=true&w=majority"
 cloudinary.config({
     cloud_name: 'xxxxx',
     api_key: 'xxxxx',
@@ -93,7 +98,7 @@ const resolvers = {
             return notes;
         },
         saveNotesTrigger: () => {
-
+            
             mongodb.connect(
                 url,
                 { useNewUrlParser: true, useUnifiedTopology: true },
