@@ -1,9 +1,6 @@
 const { gql } = require('apollo-server')
 const { Note, Upcoming } = require('./database')
 var cloudinary = require('cloudinary').v2;
-const fs = require('fs');
-const { jsPDF } = require("jspdf");
-var CircularJSON = require('circular-json');
 
 cloudinary.config({
     cloud_name: 'xxxxx',
@@ -119,17 +116,38 @@ const resolvers = {
         }
     }
 }
+// Note CSV Export
+const Json2csvParser = require("json2csv").Parser;
+const fs = require("fs");
+const mongodb = require("mongodb").MongoClient;
 
-// Note Export
+let url = "mongodb+srv://admin:P@ssw0rd@cluster0.zo5ak.mongodb.net/newnotes?retryWrites=true&w=majority"
 
-const storeData = (path) => {
-    var NotesExport = Note.find()
-    try {
-        fs.writeFileSync(path.json, CircularJSON.stringify(NotesExport))
-    } catch (err) {
-        console.error(err)
+mongodb.connect(
+    url,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    (err, client) => {
+      if (err) throw err;
+  
+        client
+            .db("newnotes")
+            .collection("notes")
+            .find({})
+            .toArray((err, data) => {
+            if (err) throw err;
+
+            const json2csvParser = new Json2csvParser({ header: true });
+            const csvData = json2csvParser.parse(data);
+    
+            fs.writeFile("Notes_Export.csv", csvData, function(error) {
+                if (error) throw error;
+                console.log("Write to Notes_Export.csv successfully!");
+            });
+    
+            client.close();
+        });
     }
-}
+);
 
 
 module.exports = {
