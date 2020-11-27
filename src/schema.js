@@ -16,6 +16,7 @@ const typeDefs = gql
     getNoteByTags(tags: [Topics!]!): [Note]
     getNoteByDate(date: String!): [Note]
     getUpcoming: [Upcoming]
+    saveNotesTrigger: [Note]
   }
 
   enum VideoCategory {
@@ -62,7 +63,9 @@ const typeDefs = gql
       deleteNote(id: ID!): String,
       addImage(id: ID!, Image: String!): String,
       updateNote(id: ID!, title: String, date: String, url: String, content: String, video:VideoCategory, reminder:String, Image:String, tags: [Topics!]): String
-  }`
+  }
+
+  `
 
 const resolvers = {
     Query: {
